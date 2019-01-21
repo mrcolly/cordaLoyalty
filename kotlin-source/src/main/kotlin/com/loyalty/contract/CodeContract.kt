@@ -1,6 +1,7 @@
 package com.loyalty.contract
 
-import com.loyalty.state.BillState
+import com.loyalty.state.CodeState
+import com.loyalty.state.PrizeState
 import net.corda.core.contracts.CommandData
 import net.corda.core.contracts.Contract
 import net.corda.core.contracts.TypeOnlyCommandData
@@ -9,10 +10,10 @@ import net.corda.core.transactions.LedgerTransaction
 import java.security.PublicKey
 import java.time.Instant
 
-class BillContract : Contract {
+class CodeContract : Contract {
     companion object {
         @JvmStatic
-        val BILL_CONTRACT_ID = "com.example.loyalty.contract.BillContract"
+        val CODE_CONTRACT_ID = "com.example.loyalty.contract.CodeContract"
     }
 
 
@@ -28,12 +29,10 @@ class BillContract : Contract {
     }
 
     private fun verifyCreate(tx: LedgerTransaction, signers: Set<PublicKey>) = requireThat {
-        val bill = tx.outputsOfType<BillState>().single()
-        "userId must be non-null" using (bill.userId.length > 0)
-        "amount must be greather than 0" using (bill.amount > 0)
-        "emissiondate must be in the past" using (bill.emissionDate < Instant.now())
-        "earnedPoints must be greather than 0" using (bill.earnedPoints >= 0)
-        "All of the participants must be signers." using (signers.containsAll(bill.participants.map { it.owningKey }))
+        val code = tx.outputsOfType<CodeState>().single()
+        "points must be grather than 0" using (code.points > 0)
+        "All of the participants must be signers." using (signers.containsAll(code.participants.map { it.owningKey }))
+        "Partecipants must differ" using (code.Eni.name != code.Partner.name)
     }
 
 

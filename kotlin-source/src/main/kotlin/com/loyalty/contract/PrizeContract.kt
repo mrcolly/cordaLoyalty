@@ -3,6 +3,7 @@ package com.loyalty.contract
 import com.loyalty.state.PrizeState
 import net.corda.core.contracts.CommandData
 import net.corda.core.contracts.Contract
+import net.corda.core.contracts.TypeOnlyCommandData
 import net.corda.core.contracts.requireThat
 import net.corda.core.transactions.LedgerTransaction
 import java.security.PublicKey
@@ -38,7 +39,7 @@ class PrizeContract : Contract {
      * This contract only implements one command, Create.
      */
     interface Commands : CommandData {
-        class Create : Commands
+        class Create : Commands, TypeOnlyCommandData()
     }
 
 }
