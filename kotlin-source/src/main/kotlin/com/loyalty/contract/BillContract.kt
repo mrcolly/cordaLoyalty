@@ -28,6 +28,7 @@ class BillContract : Contract {
     }
 
     private fun verifyCreate(tx: LedgerTransaction, signers: Set<PublicKey>) = requireThat {
+        "create must have one Bill output" using (!tx.outputsOfType<BillState>().isEmpty())
         val bill = tx.outputsOfType<BillState>().single()
         "userId must be non-null" using (bill.userId.length > 0)
         "amount must be greather than 0" using (bill.amount > 0)

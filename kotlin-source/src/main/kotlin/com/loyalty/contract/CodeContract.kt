@@ -29,6 +29,7 @@ class CodeContract : Contract {
     }
 
     private fun verifyCreate(tx: LedgerTransaction, signers: Set<PublicKey>) = requireThat {
+        "create must have one Code output" using (!tx.outputsOfType<CodeState>().isEmpty())
         val code = tx.outputsOfType<CodeState>().single()
         "points must be grather than 0" using (code.points > 0)
         "All of the participants must be signers." using (signers.containsAll(code.participants.map { it.owningKey }))

@@ -28,6 +28,7 @@ class PrizeContract : Contract {
     }
 
     private fun verifyCreate(tx: LedgerTransaction, signers: Set<PublicKey>) = requireThat {
+        "create must have one Prize output" using (!tx.outputsOfType<PrizeState>().isEmpty())
         val prize = tx.outputsOfType<PrizeState>().single()
         "userId must be non-null" using (prize.userId.length > 0)
         "All of the participants must be signers." using (signers.containsAll(prize.participants.map { it.owningKey }))
