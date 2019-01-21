@@ -10,8 +10,8 @@ import net.corda.core.schemas.PersistentState
 import net.corda.core.schemas.QueryableState
 import java.time.Instant
 
-data class PrizeState(val Partner: Party,
-                      val Eni: Party,
+data class PrizeState(val Eni: Party,
+                      val Partner: Party,
                       val userId: String,
                       val codeStateId: String,
                       val idPrize: String,
