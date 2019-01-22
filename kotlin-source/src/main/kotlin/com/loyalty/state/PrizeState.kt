@@ -14,7 +14,6 @@ data class PrizeState(val Eni: Party,
                       val Partner: Party,
                       val userId: String,
                       val codeStateId: String,
-                      val idPrize: String,
                       val timestamp: Instant,
                      override val linearId: UniqueIdentifier = UniqueIdentifier()):
         LinearState, QueryableState {
@@ -28,7 +27,6 @@ data class PrizeState(val Eni: Party,
                     this.Partner.name.toString(),
                     this.userId,
                     this.codeStateId,
-                    this.idPrize,
                     this.timestamp,
                     this.linearId.id
             )

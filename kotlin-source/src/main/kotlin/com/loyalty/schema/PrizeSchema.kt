@@ -27,9 +27,6 @@ object PrizeSchemaV1 : MappedSchema(
             @Column(name = "userId")
             var userId: String,
 
-            @Column(name = "idPrize")
-            var idPrize: String,
-
             @Column(name = "codeStateId")
             var codeStateId: String,
 
@@ -40,6 +37,6 @@ object PrizeSchemaV1 : MappedSchema(
             var linearId: UUID
     ) : PersistentState() {
         // Default constructor required by hibernate.
-        constructor(): this("", "", "","","", Instant.now(), UUID.randomUUID())
+        constructor(): this("", "", "","", Instant.now(), UUID.randomUUID())
     }
 }
