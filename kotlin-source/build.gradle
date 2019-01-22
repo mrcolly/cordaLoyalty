@@ -93,24 +93,13 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
     node {
-        name "O=Dominos,L=New York,C=US"
+        name "O=Dominos,L=Rome,C=IT"
         p2pPort 10010
         rpcSettings {
             address("localhost:10011")
             adminAddress("localhost:10051")
         }
         webPort 10012
-        cordapps = ["$corda_release_group:corda-finance:$corda_release_version"]
-        rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
-    }
-    node {
-        name "O=Eprice,L=Paris,C=FR"
-        p2pPort 10013
-        rpcSettings {
-            address("localhost:10014")
-            adminAddress("localhost:10054")
-        }
-        webPort 10015
         cordapps = ["$corda_release_group:corda-finance:$corda_release_version"]
         rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
     }

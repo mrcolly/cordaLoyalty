@@ -6,14 +6,16 @@ import net.corda.core.contracts.CommandData
 import net.corda.core.contracts.Contract
 import net.corda.core.contracts.TypeOnlyCommandData
 import net.corda.core.contracts.requireThat
+import net.corda.core.node.ServiceHub
 import net.corda.core.transactions.LedgerTransaction
+import net.corda.core.node.services.Vault
 import java.security.PublicKey
 import java.time.Instant
 
 class CodeContract : Contract {
     companion object {
         @JvmStatic
-        val CODE_CONTRACT_ID = "com.example.loyalty.contract.CodeContract"
+        val CODE_CONTRACT_ID = "com.loyalty.contract.CodeContract"
     }
 
 

@@ -12,7 +12,7 @@ import java.time.Instant
 class UserContract : Contract {
     companion object {
         @JvmStatic
-        val USER_CONTRACT_ID = "com.example.loyalty.contract.UserContract"
+        val USER_CONTRACT_ID = "com.loyalty.contract.UserContract"
     }
 
 
@@ -29,6 +29,7 @@ class UserContract : Contract {
     }
 
     private fun verifyCreate(tx: LedgerTransaction, signers: Set<PublicKey>) = requireThat {
+
         "user already exist" using (tx.inputsOfType<UserState>().isEmpty())
         "create must have userState output" using (!tx.outputsOfType<UserState>().isEmpty())
         val user = tx.outputsOfType<UserState>().single()

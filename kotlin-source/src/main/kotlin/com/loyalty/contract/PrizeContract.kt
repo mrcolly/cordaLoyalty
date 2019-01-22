@@ -12,7 +12,7 @@ import java.time.Instant
 class PrizeContract : Contract {
     companion object {
         @JvmStatic
-        val PRIZE_CONTRACT_ID = "com.example.loyalty.contract.PrizeContract"
+        val PRIZE_CONTRACT_ID = "com.loyalty.contract.PrizeContract"
     }
 
 
