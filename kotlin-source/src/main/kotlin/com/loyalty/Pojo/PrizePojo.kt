@@ -1,7 +1,6 @@
 package com.loyalty.Pojo
 
 import net.corda.core.serialization.CordaSerializable
-import java.time.Instant
 
 @CordaSerializable
 data class PrizePojo(
@@ -9,6 +8,5 @@ data class PrizePojo(
         val Partner: String = "",
         val userId: String = "",
         val codeStateId: String = "",
-        val externalId: String = "",
-        val timestamp: Instant = Instant.now()
+        val externalId: String = ""
         )

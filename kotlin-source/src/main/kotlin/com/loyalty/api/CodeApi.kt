@@ -82,9 +82,11 @@ class CodeApi(private val rpcOps: CordaRPCOps) {
                         criteria,
                         PageSpecification(myPage, DEFAULT_PAGE_SIZE),
                         Sort(setOf(Sort.SortColumn(SortAttribute.Standard(Sort.VaultStateAttribute.RECORDED_TIME), Sort.Direction.DESC)))
-                ).states
+                )
 
-                return Response.ok(results).build()
+                val statesAndMetadata = results.states.zip(results.statesMetadata)
+
+                return Response.ok(statesAndMetadata).build()
             }
         }catch (ex: Exception){
             val msg = ex.message

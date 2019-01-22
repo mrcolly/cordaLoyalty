@@ -15,7 +15,6 @@ data class UserState(val Eni: Party,
                      val lastOperation: String,
                      val operationType: Char,
                      val deltaLoyalty: Int,
-                     val timestamp: Instant,
                      override val linearId: UniqueIdentifier = UniqueIdentifier()):
         LinearState, QueryableState {
     /** The public keys of the involved parties. */
@@ -29,7 +28,6 @@ data class UserState(val Eni: Party,
                     this.lastOperation,
                     this.operationType,
                     this.deltaLoyalty,
-                    this.timestamp,
                     this.linearId.id
             )
             else -> throw IllegalArgumentException("Unrecognised schema $schema")

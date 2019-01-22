@@ -31,9 +31,6 @@ object BillSchemaV1 : MappedSchema(
             @Column(name = "emissionDate")
             var emissionDate: Instant,
 
-            @Column(name = "paymentDate")
-            var paymentDate: Instant,
-
             @Column(name = "earnedPoints")
             var earnedPoints: Int,
 
@@ -44,6 +41,6 @@ object BillSchemaV1 : MappedSchema(
             var linearId: UUID
     ) : PersistentState() {
         // Default constructor required by hibernate.
-        constructor(): this("", "", 0.0,Instant.now(),Instant.now(),0,"", UUID.randomUUID())
+        constructor(): this("", "", 0.0,Instant.now(),0,"", UUID.randomUUID())
     }
 }

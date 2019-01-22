@@ -9,7 +9,6 @@ data class BillPojo(
         val userId: String = "",
         val amount: Double = 0.0,
         val emissionDate: Instant = Instant.now().minusSeconds(200),
-        val paymentDate: Instant = Instant.now(),
         val earnedPoints: Int = 0,
         val codeStateId: String = ""
 )

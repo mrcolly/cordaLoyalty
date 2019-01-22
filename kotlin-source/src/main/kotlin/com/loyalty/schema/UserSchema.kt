@@ -33,14 +33,11 @@ object UserSchemaV1 : MappedSchema(
             @Column(name = "deltaLoyalty")
             var deltaLoyalty: Int,
 
-            @Column(name = "timestamp")
-            var timestamp: Instant,
-
             @Column(name = "linear_id")
             var linearId: UUID
 
     ) : PersistentState() {
         // Default constructor required by hibernate.
-        constructor(): this("", 0, "", '-',0, Instant.now(), UUID.randomUUID())
+        constructor(): this("", 0, "", '-',0, UUID.randomUUID())
     }
 }

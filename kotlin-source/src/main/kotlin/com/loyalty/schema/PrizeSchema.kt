@@ -30,13 +30,10 @@ object PrizeSchemaV1 : MappedSchema(
             @Column(name = "codeStateId")
             var codeStateId: String,
 
-            @Column(name = "timestamp")
-            var timestamp: Instant,
-
             @Column(name = "linear_id")
             var linearId: UUID
     ) : PersistentState() {
         // Default constructor required by hibernate.
-        constructor(): this("", "", "","", Instant.now(), UUID.randomUUID())
+        constructor(): this("", "", "","", UUID.randomUUID())
     }
 }

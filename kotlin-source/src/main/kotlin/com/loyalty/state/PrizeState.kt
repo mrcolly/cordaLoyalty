@@ -14,7 +14,6 @@ data class PrizeState(val Eni: Party,
                       val Partner: Party,
                       val userId: String,
                       val codeStateId: String,
-                      val timestamp: Instant,
                      override val linearId: UniqueIdentifier = UniqueIdentifier()):
         LinearState, QueryableState {
     /** The public keys of the involved parties. */
@@ -27,7 +26,6 @@ data class PrizeState(val Eni: Party,
                     this.Partner.name.toString(),
                     this.userId,
                     this.codeStateId,
-                    this.timestamp,
                     this.linearId.id
             )
             else -> throw IllegalArgumentException("Unrecognised schema $schema")
