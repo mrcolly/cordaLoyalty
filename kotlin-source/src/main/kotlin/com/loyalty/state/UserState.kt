@@ -11,10 +11,10 @@ import net.corda.core.schemas.QueryableState
 import java.time.Instant
 
 data class UserState(val Eni: Party,
-                     val loyaltyBalance: Int,
-                     val lastOperation: String,
+                     var loyaltyBalance: Int,
+                     var lastOperation: String,
                      val operationType: Char,
-                     val deltaLoyalty: Int,
+                     var deltaLoyalty: Int,
                      override val linearId: UniqueIdentifier = UniqueIdentifier()):
         LinearState, QueryableState {
     /** The public keys of the involved parties. */
