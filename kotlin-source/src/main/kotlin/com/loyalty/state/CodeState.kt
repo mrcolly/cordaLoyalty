@@ -14,6 +14,7 @@ import java.time.Instant
 data class CodeState(val Eni: Party,
                       val Partner: Party,
                       val points: Int,
+                      val userId: String,
                       override val linearId: UniqueIdentifier = UniqueIdentifier()):
         LinearState, QueryableState {
     /** The public keys of the involved parties. */
@@ -25,6 +26,7 @@ data class CodeState(val Eni: Party,
                     this.Eni.name.toString(),
                     this.Partner.name.toString(),
                     this.points,
+                    this.userId,
                     this.linearId.id
             )
             else -> throw IllegalArgumentException("Unrecognised schema $schema")

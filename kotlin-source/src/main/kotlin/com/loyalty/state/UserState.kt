@@ -13,7 +13,7 @@ import java.time.Instant
 data class UserState(val Eni: Party,
                      var loyaltyBalance: Int,
                      var lastOperation: String,
-                     val operationType: Char,
+                     var operationType: Char,
                      var deltaLoyalty: Int,
                      override val linearId: UniqueIdentifier = UniqueIdentifier()):
         LinearState, QueryableState {

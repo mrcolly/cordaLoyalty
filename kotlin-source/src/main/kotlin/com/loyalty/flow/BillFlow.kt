@@ -67,7 +67,7 @@ object BillFlow {
             }
 
             val codeStateInput = getCodeState(billPojo.codeStateId, serviceHub)
-            val updateUser = getUpdateUser(billPojo.userId, serviceHub)
+            val updateUser = getUser(billPojo.userId, serviceHub)
 
 
             val billState = BillState(Eni,
@@ -145,7 +145,7 @@ object BillFlow {
     }
 
     @Throws(FlowException::class)
-    private fun getCodeState(codeStateId: String, serviceHub: ServiceHub): StateAndRef<CodeState>? {
+    fun getCodeState(codeStateId: String, serviceHub: ServiceHub): StateAndRef<CodeState>? {
 
         if(codeStateId.length<1) return null
 
@@ -165,7 +165,7 @@ object BillFlow {
     }
 
     @Throws(FlowException::class)
-    private fun getUpdateUser(userStateId: String, serviceHub: ServiceHub): StateAndRef<UserState>? {
+    fun getUser(userStateId: String, serviceHub: ServiceHub): StateAndRef<UserState>? {
 
         var criteria : QueryCriteria = QueryCriteria.VaultQueryCriteria(Vault.StateStatus.UNCONSUMED)
         val customCriteria = QueryCriteria.LinearStateQueryCriteria( externalId = listOf(userStateId))

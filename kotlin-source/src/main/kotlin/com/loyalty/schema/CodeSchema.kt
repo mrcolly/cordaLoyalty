@@ -27,10 +27,13 @@ object CodeSchemaV1 : MappedSchema(
             @Column(name="points")
             var points: Int,
 
+            @Column(name="userId")
+            var userId: String,
+
             @Column(name = "linear_id")
             var linearId: UUID
     ) : PersistentState() {
         // Default constructor required by hibernate.
-        constructor(): this("", "", 0, UUID.randomUUID())
+        constructor(): this("", "", 0,"", UUID.randomUUID())
     }
 }

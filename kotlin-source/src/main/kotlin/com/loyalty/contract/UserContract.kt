@@ -35,7 +35,8 @@ class UserContract : Contract {
         val user = tx.outputsOfType<UserState>().single()
         "userId must be non-null" using (!user.linearId.externalId.isNullOrEmpty())
         "lastOperation must be filled" using (user.lastOperation.length > 0)
-        "operationType must be Prize (P) or Bill (B)" using (user.operationType == 'P' || user.operationType == 'B')
+        "loyaltyBalamce must be greather than 0" using (user.loyaltyBalance >= 0)
+        "operationType must be Prize (P) or Bill (B)" using (user.operationType == 'P' || user.operationType == 'B' || user.operationType == 'C')
         "All of the participants must be signers." using (signers.containsAll(user.participants.map { it.owningKey }))
     }
 
@@ -51,13 +52,14 @@ class UserContract : Contract {
         //userIn
         "userId must be non-null" using (!userIn.linearId.externalId.isNullOrEmpty())
         "lastOperation must be filled" using (userIn.lastOperation.length > 0)
-        "operationType must be Prize (P) or Bill (B)" using (userIn.operationType == 'P' || userIn.operationType == 'B')
+        "operationType must be Prize (P) or Bill (B)" using (userIn.operationType == 'P' || userIn.operationType == 'B' || userIn.operationType == 'C')
         "All of the participants must be signers." using (signers.containsAll(userIn.participants.map { it.owningKey }))
 
         //userOut
         "userId must be non-null" using (!userOut.linearId.externalId.isNullOrEmpty())
         "lastOperation must be filled" using (userOut.lastOperation.length > 0)
-        "operationType must be Prize (P) or Bill (B)" using (userOut.operationType == 'P' || userOut.operationType == 'B')
+        "loyaltyBalamce must be greather than 0" using (userOut.loyaltyBalance >= 0)
+        "operationType must be Prize (P) or Bill (B)" using (userOut.operationType == 'P' || userOut.operationType == 'B' || userOut.operationType == 'C')
         "All of the participants must be signers." using (signers.containsAll(userOut.participants.map { it.owningKey }))
 
 
