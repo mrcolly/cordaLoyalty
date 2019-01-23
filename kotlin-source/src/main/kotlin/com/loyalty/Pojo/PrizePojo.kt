@@ -8,5 +8,6 @@ data class PrizePojo(
         val Partner: String = "",
         val userId: String = "",
         val codeStateId: String = "",
+        val costPoints: Int = 0,
         val externalId: String = ""
         )
