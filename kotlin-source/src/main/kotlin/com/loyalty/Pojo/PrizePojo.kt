@@ -7,7 +7,7 @@ data class PrizePojo(
         val Eni: String = "O=Eni,L=Milan,C=IT",
         val Partner: String = "",
         val userId: String = "",
-        val codeStateId: String = "",
+        val couponStateId: String = "",
         val costPoints: Int = 0,
         val externalId: String = ""
         )

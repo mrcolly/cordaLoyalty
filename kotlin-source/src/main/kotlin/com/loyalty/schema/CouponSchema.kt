@@ -8,16 +8,16 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Table
 
-object CodeSchema
+object CouponSchema
 
 
-object CodeSchemaV1 : MappedSchema(
-        schemaFamily = CodeSchema.javaClass,
+object CouponSchemaV1 : MappedSchema(
+        schemaFamily = CouponSchema.javaClass,
         version = 1,
-        mappedTypes = listOf(PersistentCode::class.java)) {
+        mappedTypes = listOf(PersistentCoupon::class.java)) {
     @Entity
-    @Table(name = "code_states")
-    class PersistentCode(
+    @Table(name = "coupon_states")
+    class PersistentCoupon(
             @Column(name = "Eni")
             var Eni: String,
 

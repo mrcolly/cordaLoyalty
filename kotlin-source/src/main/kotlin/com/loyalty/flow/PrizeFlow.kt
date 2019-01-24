@@ -7,7 +7,7 @@ import com.loyalty.contract.BillContract
 import com.loyalty.contract.PrizeContract
 import com.loyalty.contract.UserContract
 import com.loyalty.state.BillState
-import com.loyalty.state.CodeState
+import com.loyalty.state.CouponState
 import com.loyalty.state.PrizeState
 import com.loyalty.state.UserState
 import net.corda.core.contracts.Command
@@ -76,7 +76,7 @@ object PrizeFlow {
             val prizeState = PrizeState(Eni,
                     myLegalIdentity,
                     prizePojo.userId,
-                    prizePojo.codeStateId,
+                    prizePojo.couponStateId,
                     prizePojo.costPoints,
                     UniqueIdentifier(id = UUID.randomUUID(), externalId = prizePojo.externalId)
             )
@@ -88,12 +88,12 @@ object PrizeFlow {
 
             eniSession.send(prizePojo)
 
-            val packet1: UntrustworthyData<StateAndRef<CodeState>> = eniSession.receive<StateAndRef<CodeState>>()
-            val codeStateInput: StateAndRef<CodeState> = packet1.unwrap { data ->
+            val packet1: UntrustworthyData<StateAndRef<CouponState>> = eniSession.receive<StateAndRef<CouponState>>()
+            val couponStateInput: StateAndRef<CouponState> = packet1.unwrap { data ->
                 data
             }
 
-            txBuilder.addInputState(codeStateInput)
+            txBuilder.addInputState(couponStateInput)
 
             // Stage 2.
             progressTracker.currentStep = VERIFYING_TRANSACTION
@@ -128,9 +128,9 @@ object PrizeFlow {
                 data
             }
 
-            val codeStateInput = BillFlow.getCodeState(prizePojo.codeStateId, serviceHub)
+            val couponStateInput = BillFlow.getCouponState(prizePojo.couponStateId, serviceHub)
 
-            if(codeStateInput!=null) otherPartyFlow.send(codeStateInput) else throw FlowException("cannot find code "+ prizePojo.codeStateId)
+            if(couponStateInput!=null) otherPartyFlow.send(couponStateInput) else throw FlowException("cannot find coupon "+ prizePojo.couponStateId)
 
             val signTransactionFlow = object : SignTransactionFlow(otherPartyFlow) {
                 override fun checkTransaction(stx: SignedTransaction) = requireThat {
@@ -143,23 +143,23 @@ object PrizeFlow {
     }
 
     @Throws(FlowException::class)
-    fun getCodeState(codeStateId: String, serviceHub: ServiceHub): StateAndRef<CodeState>? {
+    fun getCouponState(couponStateId: String, serviceHub: ServiceHub): StateAndRef<CouponState>? {
 
-        if(codeStateId.length<1) return null
+        if(couponStateId.length<1) return null
 
         var criteria : QueryCriteria = QueryCriteria.VaultQueryCriteria(Vault.StateStatus.UNCONSUMED)
-        val customCriteria = QueryCriteria.LinearStateQueryCriteria( uuid = listOf(UUID.fromString(codeStateId)))
+        val customCriteria = QueryCriteria.LinearStateQueryCriteria( uuid = listOf(UUID.fromString(couponStateId)))
         criteria = criteria.and(customCriteria)
 
-        val codeStates = serviceHub.vaultService.queryBy<CodeState>(
+        val couponStates = serviceHub.vaultService.queryBy<CouponState>(
                 criteria,
                 PageSpecification(1, MAX_PAGE_SIZE),
                 Sort(setOf(Sort.SortColumn(SortAttribute.Standard(Sort.VaultStateAttribute.RECORDED_TIME), Sort.Direction.DESC)))
         ).states
 
-        if(codeStates.size > 1 || codeStates.size == 0) throw FlowException("no code state with UUID" +codeStateId+ "found")
+        if(couponStates.size > 1 || couponStates.size == 0) throw FlowException("no coupon state with UUID" +couponStateId+ "found")
 
-        return codeStates.get(0)
+        return couponStates.get(0)
     }
 
     @Throws(FlowException::class)

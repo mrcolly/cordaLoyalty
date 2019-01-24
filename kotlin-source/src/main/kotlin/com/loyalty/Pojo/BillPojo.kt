@@ -10,5 +10,5 @@ data class BillPojo(
         val amount: Double = 0.0,
         val emissionDate: Instant = Instant.now().minusSeconds(200),
         val earnedPoints: Int = 0,
-        val codeStateId: String = ""
+        val couponStateId: String = ""
 )

@@ -5,7 +5,7 @@ import com.loyalty.Pojo.BillPojo
 import com.loyalty.contract.BillContract
 import com.loyalty.contract.UserContract
 import com.loyalty.state.BillState
-import com.loyalty.state.CodeState
+import com.loyalty.state.CouponState
 import com.loyalty.state.UserState
 import net.corda.core.contracts.Command
 import net.corda.core.contracts.StateAndRef
@@ -66,7 +66,7 @@ object BillFlow {
                 throw FlowException("cannot start bill flow from this node")
             }
 
-            val codeStateInput = getCodeState(billPojo.codeStateId, serviceHub)
+            val couponStateInput = getCouponState(billPojo.couponStateId, serviceHub)
             val updateUser = getUser(billPojo.userId, serviceHub)
 
 
@@ -75,20 +75,20 @@ object BillFlow {
                     billPojo.amount,
                     billPojo.emissionDate,
                     billPojo.earnedPoints,
-                    billPojo.codeStateId)
+                    billPojo.couponStateId)
 
             val txCommand = Command(BillContract.Commands.Create(), billState.participants.map { it.owningKey })
             val txBuilder = TransactionBuilder(notary)
                     .addOutputState(billState, BillContract.BILL_CONTRACT_ID)
                     .addCommand(txCommand)
 
-            if(codeStateInput != null) txBuilder.addInputState(codeStateInput)
+            if(couponStateInput != null) txBuilder.addInputState(couponStateInput)
 
             if(updateUser != null){
                 var userState = updateUser.state.data
                 val oldBalance = userState.loyaltyBalance
 
-                if(codeStateInput == null){
+                if(couponStateInput == null){
                     userState.loyaltyBalance = userState.loyaltyBalance + billState.earnedPoints
                     userState.deltaLoyalty = oldBalance - userState.loyaltyBalance
                 }else{
@@ -105,7 +105,7 @@ object BillFlow {
                         billState.earnedPoints,
                         billState.linearId.id.toString(),
                         'B',
-                        if(codeStateInput == null) billState.earnedPoints else 0,
+                        if(couponStateInput == null) billState.earnedPoints else 0,
                         UniqueIdentifier(id = UUID.randomUUID(), externalId = billPojo.userId))
 
                 txBuilder
@@ -145,23 +145,23 @@ object BillFlow {
     }
 
     @Throws(FlowException::class)
-    fun getCodeState(codeStateId: String, serviceHub: ServiceHub): StateAndRef<CodeState>? {
+    fun getCouponState(couponStateId: String, serviceHub: ServiceHub): StateAndRef<CouponState>? {
 
-        if(codeStateId.length<1) return null
+        if(couponStateId.length<1) return null
 
         var criteria : QueryCriteria = QueryCriteria.VaultQueryCriteria(Vault.StateStatus.UNCONSUMED)
-        val customCriteria = QueryCriteria.LinearStateQueryCriteria( uuid = listOf(UUID.fromString(codeStateId)))
+        val customCriteria = QueryCriteria.LinearStateQueryCriteria( uuid = listOf(UUID.fromString(couponStateId)))
         criteria = criteria.and(customCriteria)
 
-        val codeStates = serviceHub.vaultService.queryBy<CodeState>(
+        val couponStates = serviceHub.vaultService.queryBy<CouponState>(
                 criteria,
                 PageSpecification(1, MAX_PAGE_SIZE),
                 Sort(setOf(Sort.SortColumn(SortAttribute.Standard(Sort.VaultStateAttribute.RECORDED_TIME), Sort.Direction.DESC)))
         ).states
 
-        if(codeStates.size > 1 || codeStates.size == 0) throw FlowException("no code state with UUID" +codeStateId+ "found")
+        if(couponStates.size > 1 || couponStates.size == 0) throw FlowException("no coupon state with UUID" +couponStateId+ "found")
 
-        return codeStates.get(0)
+        return couponStates.get(0)
     }
 
     @Throws(FlowException::class)

@@ -1,6 +1,6 @@
 package com.loyalty.contract
 
-import com.loyalty.state.CodeState
+import com.loyalty.state.CouponState
 import com.loyalty.state.PrizeState
 import com.loyalty.state.UserState
 import net.corda.core.contracts.CommandData
@@ -13,10 +13,10 @@ import net.corda.core.node.services.Vault
 import java.security.PublicKey
 import java.time.Instant
 
-class CodeContract : Contract {
+class CouponContract : Contract {
     companion object {
         @JvmStatic
-        val CODE_CONTRACT_ID = "com.loyalty.contract.CodeContract"
+        val COUPON_CONTRACT_ID = "com.loyalty.contract.CouponContract"
     }
 
 
@@ -33,14 +33,14 @@ class CodeContract : Contract {
 
     private fun verifyCreate(tx: LedgerTransaction, signers: Set<PublicKey>) = requireThat {
 
-        "create must have one Code output" using (!tx.outputsOfType<CodeState>().isEmpty())
-        val code = tx.outputsOfType<CodeState>().single()
-        "points must be grather than 0" using (code.points > 0)
-        "All of the participants must be signers." using (signers.containsAll(code.participants.map { it.owningKey }))
-        "Partecipants must differ" using (code.Eni.name != code.Partner.name)
+        "create must have one Coupon output" using (!tx.outputsOfType<CouponState>().isEmpty())
+        val coupon = tx.outputsOfType<CouponState>().single()
+        "points must be grather than 0" using (coupon.points > 0)
+        "All of the participants must be signers." using (signers.containsAll(coupon.participants.map { it.owningKey }))
+        "Partecipants must differ" using (coupon.Eni.name != coupon.Partner.name)
         "create must have one User input" using (!tx.inputsOfType<UserState>().isEmpty())
         val user = tx.outputsOfType<UserState>().single()
-        "user must have balance for the code" using (code.points <= user.loyaltyBalance)
+        "user must have balance for the coupon" using (coupon.points <= user.loyaltyBalance)
     }
 
 

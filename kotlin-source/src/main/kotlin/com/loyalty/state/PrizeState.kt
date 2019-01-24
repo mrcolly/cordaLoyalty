@@ -13,7 +13,7 @@ import java.time.Instant
 data class PrizeState(val Eni: Party,
                       val Partner: Party,
                       val userId: String,
-                      val codeStateId: String,
+                      val couponStateId: String,
                       val costPoints: Int,
                      override val linearId: UniqueIdentifier = UniqueIdentifier()):
         LinearState, QueryableState {
@@ -26,7 +26,7 @@ data class PrizeState(val Eni: Party,
                     this.Eni.name.toString(),
                     this.Partner.name.toString(),
                     this.userId,
-                    this.codeStateId,
+                    this.couponStateId,
                     this.costPoints,
                     this.linearId.id
             )

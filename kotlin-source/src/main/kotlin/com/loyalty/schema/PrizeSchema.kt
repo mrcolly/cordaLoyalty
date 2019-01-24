@@ -27,8 +27,8 @@ object PrizeSchemaV1 : MappedSchema(
             @Column(name = "userId")
             var userId: String,
 
-            @Column(name = "codeStateId")
-            var codeStateId: String,
+            @Column(name = "couponStateId")
+            var couponStateId: String,
 
             @Column(name = "costPoints")
             var costPoints: Int,

@@ -34,8 +34,8 @@ object BillSchemaV1 : MappedSchema(
             @Column(name = "earnedPoints")
             var earnedPoints: Int,
 
-            @Column(name = "codeStateId")
-            var codeStateId: String,
+            @Column(name = "couponStateId")
+            var couponStateId: String,
 
             @Column(name = "linear_id")
             var linearId: UUID

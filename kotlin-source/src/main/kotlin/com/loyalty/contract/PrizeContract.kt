@@ -1,6 +1,6 @@
 package com.loyalty.contract
 
-import com.loyalty.state.CodeState
+import com.loyalty.state.CouponState
 import com.loyalty.state.PrizeState
 import net.corda.core.contracts.CommandData
 import net.corda.core.contracts.Contract
@@ -34,9 +34,9 @@ class PrizeContract : Contract {
         "userId must be non-null" using (prize.userId.length > 0)
         "All of the participants must be signers." using (signers.containsAll(prize.participants.map { it.owningKey }))
         "Partecipants must differ" using (prize.Eni.name != prize.Partner.name)
-        "create must have one code input" using (!tx.inputsOfType<CodeState>().isEmpty())
-        val code = tx.inputsOfType<CodeState>().single()
-        "code points must be grather than prize cost" using (code.points >= prize.costPoints)
+        "create must have one coupon input" using (!tx.inputsOfType<CouponState>().isEmpty())
+        val coupon = tx.inputsOfType<CouponState>().single()
+        "coupon points must be grather than prize cost" using (coupon.points >= prize.costPoints)
     }
 
 

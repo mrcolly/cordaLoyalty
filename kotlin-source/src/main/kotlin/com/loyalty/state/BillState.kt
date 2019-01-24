@@ -15,7 +15,7 @@ data class BillState(val Eni: Party,
                     val amount: Double,
                     val emissionDate: Instant,
                     val earnedPoints: Int,
-                    val codeStateId: String,
+                    val couponStateId: String,
                     override val linearId: UniqueIdentifier = UniqueIdentifier()):
         LinearState, QueryableState {
     /** The public keys of the involved parties. */
@@ -29,7 +29,7 @@ data class BillState(val Eni: Party,
                     this.amount,
                     this.emissionDate,
                     this.earnedPoints,
-                    this.codeStateId,
+                    this.couponStateId,
                     this.linearId.id
             )
             else -> throw IllegalArgumentException("Unrecognised schema $schema")

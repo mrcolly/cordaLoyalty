@@ -2,7 +2,7 @@ package com.example.plugin
 
 import com.example.api.ExampleApi
 import com.loyalty.api.BillApi
-import com.loyalty.api.CodeApi
+import com.loyalty.api.CouponApi
 import com.loyalty.api.PrizeApi
 import com.loyalty.api.UserApi
 import net.corda.core.messaging.CordaRPCOps
@@ -13,6 +13,6 @@ class ExamplePlugin : WebServerPluginRegistry {
     /**
      * A list of classes that expose web APIs.
      */
-    override val webApis = listOf(Function(::ExampleApi), Function(::CodeApi), Function(::BillApi),  Function(::UserApi), Function(::PrizeApi))
+    override val webApis = listOf(Function(::ExampleApi), Function(::CouponApi), Function(::BillApi),  Function(::UserApi), Function(::PrizeApi))
 
 }

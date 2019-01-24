@@ -29,7 +29,7 @@ import net.corda.core.utilities.getOrThrow
 class PrizeApi(private val rpcOps: CordaRPCOps) {
 
     companion object {
-        private val logger: Logger = loggerFor<CodeApi>()
+        private val logger: Logger = loggerFor<CouponApi>()
     }
 
 

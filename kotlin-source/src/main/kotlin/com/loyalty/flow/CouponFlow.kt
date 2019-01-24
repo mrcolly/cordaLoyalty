@@ -3,11 +3,11 @@ package com.loyalty.flow
 import co.paralleluniverse.fibers.Suspendable
 import com.example.contract.IOUContract
 import com.example.state.IOUState
-import com.loyalty.Pojo.CodePojo
-import com.loyalty.contract.CodeContract
+import com.loyalty.Pojo.CouponPojo
+import com.loyalty.contract.CouponContract
 import com.loyalty.contract.UserContract
 import com.loyalty.flow.BillFlow.getUser
-import com.loyalty.state.CodeState
+import com.loyalty.state.CouponState
 import net.corda.core.contracts.Command
 import net.corda.core.contracts.Requirements.using
 import net.corda.core.contracts.UniqueIdentifier
@@ -20,12 +20,12 @@ import net.corda.core.utilities.ProgressTracker
 import java.util.*
 
 
-object CodeFlow {
+object CouponFlow {
     @InitiatingFlow
     @StartableByRPC
     class Creator(val Eni: Party,
                   val partner: Party,
-                  val codePojo : CodePojo) : FlowLogic<SignedTransaction>() {
+                  val couponPojo : CouponPojo) : FlowLogic<SignedTransaction>() {
 
         companion object {
             object GENERATING_TRANSACTION : ProgressTracker.Step("Generating transaction based on new IOU.")
@@ -61,33 +61,33 @@ object CodeFlow {
             progressTracker.currentStep = GENERATING_TRANSACTION
             // Generate an unsigned transaction.
             if(myLegalIdentity.name.organisation != "Eni"){
-                throw FlowException("cannot start codeCreator flow from this node")
+                throw FlowException("cannot start couponCreator flow from this node")
             }
 
-            val user = getUser(codePojo.userId, serviceHub)
+            val user = getUser(couponPojo.userId, serviceHub)
 
-            if(user == null) throw FlowException("no user " + codePojo.userId + " found")
+            if(user == null) throw FlowException("no user " + couponPojo.userId + " found")
 
-            val codeState = CodeState(Eni,
+            val couponState = CouponState(Eni,
                     partner,
-                    codePojo.points,
-                    codePojo.userId,
-                    UniqueIdentifier(id = UUID.randomUUID(), externalId = codePojo.externalId))
+                    couponPojo.points,
+                    couponPojo.userId,
+                    UniqueIdentifier(id = UUID.randomUUID(), externalId = couponPojo.externalId))
 
             var updateUser = user.state.data
             updateUser.operationType = 'C'
-            updateUser.lastOperation = codeState.linearId.externalId!!
-            updateUser.deltaLoyalty = -codeState.points
+            updateUser.lastOperation = couponState.linearId.externalId!!
+            updateUser.deltaLoyalty = -couponState.points
             updateUser.loyaltyBalance += updateUser.deltaLoyalty
 
 
-            val txCommand = Command(CodeContract.Commands.Create(), codeState.participants.map { it.owningKey })
+            val txCommand = Command(CouponContract.Commands.Create(), couponState.participants.map { it.owningKey })
             val txBuilder = TransactionBuilder(notary)
-                    .addOutputState(codeState, CodeContract.CODE_CONTRACT_ID)
+                    .addOutputState(couponState, CouponContract.COUPON_CONTRACT_ID)
                     .addCommand(txCommand)
                     .addInputState(user)
                     .addOutputState(updateUser, UserContract.USER_CONTRACT_ID)
-                    .addCommand(UserContract.Commands.Update(), codeState.participants.map { it.owningKey })
+                    .addCommand(UserContract.Commands.Update(), couponState.participants.map { it.owningKey })
 
             // Stage 2.
             progressTracker.currentStep = VERIFYING_TRANSACTION

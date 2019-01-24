@@ -1,10 +1,10 @@
 package com.loyalty.api
 
 
-import com.loyalty.Pojo.CodePojo
-import com.loyalty.flow.CodeFlow
-import com.loyalty.schema.CodeSchemaV1
-import com.loyalty.state.CodeState
+import com.loyalty.Pojo.CouponPojo
+import com.loyalty.flow.CouponFlow
+import com.loyalty.schema.CouponSchemaV1
+import com.loyalty.state.CouponState
 import com.snam.POJO.ResponsePojo
 import net.corda.core.identity.CordaX500Name
 import net.corda.core.identity.Party
@@ -23,11 +23,11 @@ import javax.ws.rs.core.Response.Status.CREATED
 import net.corda.core.node.services.vault.QueryCriteria
 import net.corda.core.utilities.getOrThrow
 
-@Path("code")
-class CodeApi(private val rpcOps: CordaRPCOps) {
+@Path("coupon")
+class CouponApi(private val rpcOps: CordaRPCOps) {
 
     companion object {
-        private val logger: Logger = loggerFor<CodeApi>()
+        private val logger: Logger = loggerFor<CouponApi>()
     }
 
 
@@ -64,7 +64,7 @@ class CodeApi(private val rpcOps: CordaRPCOps) {
                 }
 
                 if(partner.length > 0){
-                    val idEqual = CodeSchemaV1.PersistentCode::Partner.equal(partner)
+                    val idEqual = CouponSchemaV1.PersistentCoupon::Partner.equal(partner)
                     val customCriteria = QueryCriteria.VaultCustomQueryCriteria(idEqual, myStatus)
                     criteria = criteria.and(customCriteria)
                 }
@@ -78,7 +78,7 @@ class CodeApi(private val rpcOps: CordaRPCOps) {
                     criteria = criteria.and(customCriteria)
                 }*/
 
-                val results = rpcOps.vaultQueryBy<CodeState>(
+                val results = rpcOps.vaultQueryBy<CouponState>(
                         criteria,
                         PageSpecification(myPage, DEFAULT_PAGE_SIZE),
                         Sort(setOf(Sort.SortColumn(SortAttribute.Standard(Sort.VaultStateAttribute.RECORDED_TIME), Sort.Direction.DESC)))
@@ -101,13 +101,13 @@ class CodeApi(private val rpcOps: CordaRPCOps) {
     @Path("insert")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    fun createProposal(req : CodePojo): Response {
+    fun createProposal(req : CouponPojo): Response {
 
         try {
             val partner : Party = rpcOps.wellKnownPartyFromX500Name(CordaX500Name.parse(req.Partner))!!
             val eni : Party = rpcOps.wellKnownPartyFromX500Name(CordaX500Name.parse("O=Eni,L=Milan,C=IT"))!!
 
-            val signedTx = rpcOps.startTrackedFlow(CodeFlow::Creator,
+            val signedTx = rpcOps.startTrackedFlow(CouponFlow::Creator,
                     eni,
                     partner,
                     req)
