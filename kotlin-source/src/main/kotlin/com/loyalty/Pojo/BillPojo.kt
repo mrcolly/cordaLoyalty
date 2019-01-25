@@ -13,7 +13,8 @@ data class BillPojo(
         val earnedPoints: Int = if((getHoursDifference(emissionDate, Instant.now())) < 72) (amount * 0.2).toInt() else (amount * 0.1).toInt(),
         val couponStateId: String = "",
         val type: Char = '-',
-        val expirationDate: Instant = emissionDate.plusSeconds(108000)
+        val expirationDate: Instant = emissionDate.plusSeconds(2592000),
+        val externalId: String = ""
         )
 
 

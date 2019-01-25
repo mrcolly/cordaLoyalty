@@ -34,9 +34,6 @@ class PrizeContract : Contract {
         "userId must be non-null" using (prize.userId.length > 0)
         "All of the participants must be signers." using (signers.containsAll(prize.participants.map { it.owningKey }))
         "Partecipants must differ" using (prize.Eni.name != prize.Partner.name)
-        "create must have one coupon input" using (!tx.inputsOfType<CouponState>().isEmpty())
-        val coupon = tx.inputsOfType<CouponState>().single()
-        "coupon points must be grather than prize cost" using (coupon.points >= prize.costPoints)
     }
 
 

@@ -88,13 +88,6 @@ object PrizeFlow {
 
             eniSession.send(prizePojo)
 
-            val packet1: UntrustworthyData<StateAndRef<CouponState>> = eniSession.receive<StateAndRef<CouponState>>()
-            val couponStateInput: StateAndRef<CouponState> = packet1.unwrap { data ->
-                data
-            }
-
-            txBuilder.addInputState(couponStateInput)
-
             // Stage 2.
             progressTracker.currentStep = VERIFYING_TRANSACTION
             // Verify that the transaction is valid.
@@ -130,11 +123,11 @@ object PrizeFlow {
 
             val couponStateInput = BillFlow.getCouponState(prizePojo.couponStateId, serviceHub)
 
-            if(couponStateInput!=null) otherPartyFlow.send(couponStateInput) else throw FlowException("cannot find coupon "+ prizePojo.couponStateId)
-
             val signTransactionFlow = object : SignTransactionFlow(otherPartyFlow) {
                 override fun checkTransaction(stx: SignedTransaction) = requireThat {
-
+                    "cannot find couponState" + prizePojo.couponStateId using (couponStateInput!= null)
+                    "coupon points must be greather than prize cost" using (couponStateInput!!.state.data.points >= prizePojo.costPoints)
+                    prizePojo.userId+" cannot spend this coupon" using (prizePojo.userId == couponStateInput!!.state.data.userId)
                 }
             }
 
@@ -148,7 +141,7 @@ object PrizeFlow {
         if(couponStateId.length<1) return null
 
         var criteria : QueryCriteria = QueryCriteria.VaultQueryCriteria(Vault.StateStatus.UNCONSUMED)
-        val customCriteria = QueryCriteria.LinearStateQueryCriteria( uuid = listOf(UUID.fromString(couponStateId)))
+        val customCriteria = QueryCriteria.LinearStateQueryCriteria( externalId = listOf(couponStateId))
         criteria = criteria.and(customCriteria)
 
         val couponStates = serviceHub.vaultService.queryBy<CouponState>(

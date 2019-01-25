@@ -26,6 +26,7 @@ class CouponContract : Contract {
             val setOfSigners = command.signers.toSet()
             when (command.value) {
                 is Commands.Create -> verifyCreate(tx, setOfSigners)
+                is Commands.Consume -> verifyConsume(tx, setOfSigners)
                 else -> throw IllegalArgumentException("Unrecognised command.")
             }
         }
@@ -37,10 +38,16 @@ class CouponContract : Contract {
         val coupon = tx.outputsOfType<CouponState>().single()
         "points must be grather than 0" using (coupon.points > 0)
         "All of the participants must be signers." using (signers.containsAll(coupon.participants.map { it.owningKey }))
-        "Partecipants must differ" using (coupon.Eni.name != coupon.Partner.name)
         "create must have one User input" using (!tx.inputsOfType<UserState>().isEmpty())
         val user = tx.outputsOfType<UserState>().single()
         "user must have balance for the coupon" using (coupon.points <= user.loyaltyBalance)
+    }
+
+    private fun verifyConsume(tx: LedgerTransaction, signers: Set<PublicKey>) = requireThat {
+
+        "create must have one Coupon input" using (!tx.inputsOfType<CouponState>().isEmpty())
+        val coupon = tx.inputsOfType<CouponState>().single()
+        "All of the participants must be signers." using (signers.containsAll(coupon.participants.map { it.owningKey }))
     }
 
 
@@ -49,6 +56,7 @@ class CouponContract : Contract {
      */
     interface Commands : CommandData {
         class Create : Commands, TypeOnlyCommandData()
+        class Consume : Commands, TypeOnlyCommandData()
     }
 
 }

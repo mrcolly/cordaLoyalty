@@ -77,10 +77,11 @@ object BillFlow {
                     billPojo.earnedPoints,
                     billPojo.couponStateId,
                     billPojo.type,
-                    billPojo.expirationDate)
+                    billPojo.expirationDate,
+                    UniqueIdentifier(id = UUID.randomUUID(), externalId = billPojo.externalId))
 
             if(couponStateInput != null) {
-                billState.earnedPoints == 0
+                billState.earnedPoints = 0
                 billState.amount -= couponStateInput.state.data.points
             }
 
@@ -93,6 +94,11 @@ object BillFlow {
 
             if(updateUser != null){
                 var userState = updateUser.state.data
+
+                if(couponStateInput!!.state.data.userId != userState.linearId.externalId){
+                    throw FlowException(userState.linearId.externalId+" cannot spend this coupon")
+                }
+
                 val oldBalance = userState.loyaltyBalance
 
                 userState.loyaltyBalance = userState.loyaltyBalance + billState.earnedPoints
@@ -154,7 +160,7 @@ object BillFlow {
         if(couponStateId.length<1) return null
 
         var criteria : QueryCriteria = QueryCriteria.VaultQueryCriteria(Vault.StateStatus.UNCONSUMED)
-        val customCriteria = QueryCriteria.LinearStateQueryCriteria( uuid = listOf(UUID.fromString(couponStateId)))
+        val customCriteria = QueryCriteria.LinearStateQueryCriteria( externalId = listOf(couponStateId))
         criteria = criteria.and(customCriteria)
 
         val couponStates = serviceHub.vaultService.queryBy<CouponState>(

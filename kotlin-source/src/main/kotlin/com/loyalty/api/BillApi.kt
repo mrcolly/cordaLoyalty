@@ -3,6 +3,7 @@ package com.loyalty.api
 
 import com.loyalty.Pojo.BillPojo
 import com.loyalty.flow.BillFlow
+import com.loyalty.schema.BillSchemaV1
 import com.loyalty.state.BillState
 import com.snam.POJO.ResponsePojo
 import net.corda.core.identity.CordaX500Name
@@ -33,8 +34,9 @@ class BillApi(private val rpcOps: CordaRPCOps) {
     @GET
     @Path("get")
     @Produces(MediaType.APPLICATION_JSON)
-    fun getAllProposalsByParams(@DefaultValue("1") @QueryParam("page") page: Int,
+    fun getAllBillsByParams(@DefaultValue("1") @QueryParam("page") page: Int,
                                 @DefaultValue("") @QueryParam("id") externalId: String,
+                                @DefaultValue("") @QueryParam("user") userId: String,
                                 @DefaultValue("unconsumed") @QueryParam("status") status: String): Response {
 
         try{
@@ -58,6 +60,12 @@ class BillApi(private val rpcOps: CordaRPCOps) {
 
                 if(externalId.length > 0){
                     val customCriteria = QueryCriteria.LinearStateQueryCriteria( externalId = listOf(externalId), status = myStatus)
+                    criteria = criteria.and(customCriteria)
+                }
+
+                if(userId.length > 0){
+                    val idEqual = BillSchemaV1.PersistentBill::userId.equal(userId)
+                    val customCriteria = QueryCriteria.VaultCustomQueryCriteria(idEqual, myStatus)
                     criteria = criteria.and(customCriteria)
                 }
 

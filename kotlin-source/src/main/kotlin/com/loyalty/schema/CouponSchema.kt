@@ -21,9 +21,6 @@ object CouponSchemaV1 : MappedSchema(
             @Column(name = "Eni")
             var Eni: String,
 
-            @Column(name="Partner")
-            var Partner: String,
-
             @Column(name="points")
             var points: Int,
 
@@ -34,6 +31,6 @@ object CouponSchemaV1 : MappedSchema(
             var linearId: UUID
     ) : PersistentState() {
         // Default constructor required by hibernate.
-        constructor(): this("", "", 0,"", UUID.randomUUID())
+        constructor(): this("", 0,"", UUID.randomUUID())
     }
 }

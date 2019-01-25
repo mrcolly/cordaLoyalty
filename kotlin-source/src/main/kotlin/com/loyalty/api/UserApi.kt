@@ -34,7 +34,7 @@ class UserApi(private val rpcOps: CordaRPCOps) {
     @GET
     @Path("get")
     @Produces(MediaType.APPLICATION_JSON)
-    fun getAllProposalsByParams(@DefaultValue("1") @QueryParam("page") page: Int,
+    fun getAllUsersByParams(@DefaultValue("1") @QueryParam("page") page: Int,
                                 @DefaultValue("") @QueryParam("id") externalId: String,
                                 @DefaultValue("unconsumed") @QueryParam("status") status: String): Response {
 

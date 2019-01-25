@@ -1,8 +1,9 @@
 package com.loyalty.state
 
+import com.loyalty.flow.CouponFlow
 import com.loyalty.schema.PrizeSchemaV1
-import net.corda.core.contracts.LinearState
-import net.corda.core.contracts.UniqueIdentifier
+import net.corda.core.contracts.*
+import net.corda.core.flows.FlowLogicRefFactory
 import net.corda.core.identity.AbstractParty
 import net.corda.core.identity.Party
 import net.corda.core.schemas.MappedSchema
@@ -15,10 +16,15 @@ data class PrizeState(val Eni: Party,
                       val userId: String,
                       val couponStateId: String,
                       val costPoints: Int,
-                     override val linearId: UniqueIdentifier = UniqueIdentifier()):
-        LinearState, QueryableState {
+                     override val linearId: UniqueIdentifier = UniqueIdentifier(),
+                     val couponScheduledTime: Instant = Instant.now()):
+        LinearState, QueryableState, SchedulableState {
     /** The public keys of the involved parties. */
     override val participants: List<AbstractParty> get() = listOf(Partner, Eni)
+
+    override fun nextScheduledActivity(thisStateRef: StateRef, flowLogicRefFactory: FlowLogicRefFactory): ScheduledActivity? {
+        return ScheduledActivity(flowLogicRefFactory.create(CouponFlow.Consumer::class.java, thisStateRef), couponScheduledTime)
+    }
 
     override fun generateMappedObject(schema: MappedSchema): PersistentState {
         return when (schema) {

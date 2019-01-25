@@ -34,9 +34,9 @@ class CouponApi(private val rpcOps: CordaRPCOps) {
     @GET
     @Path("get")
     @Produces(MediaType.APPLICATION_JSON)
-    fun getAllProposalsByParams(@DefaultValue("1") @QueryParam("page") page: Int,
+    fun getAllCouponsByParams(@DefaultValue("1") @QueryParam("page") page: Int,
                                 @DefaultValue("") @QueryParam("id") externalId: String,
-                                @DefaultValue("") @QueryParam("partner") partner: String,
+                                @DefaultValue("") @QueryParam("user") userId: String,
                                 @DefaultValue("unconsumed") @QueryParam("status") status: String): Response {
 
         try{
@@ -63,20 +63,12 @@ class CouponApi(private val rpcOps: CordaRPCOps) {
                     criteria = criteria.and(customCriteria)
                 }
 
-                if(partner.length > 0){
-                    val idEqual = CouponSchemaV1.PersistentCoupon::Partner.equal(partner)
+
+                if(userId.length > 0){
+                    val idEqual = CouponSchemaV1.PersistentCoupon::userId.equal(userId)
                     val customCriteria = QueryCriteria.VaultCustomQueryCriteria(idEqual, myStatus)
                     criteria = criteria.and(customCriteria)
                 }
-
-                /*if(from.length > 0 && to.length > 0){
-                    val format = SimpleDateFormat("yyyy-MM-dd")
-                    var myFrom = format.parse(from)
-                    var myTo = format.parse(to)
-                    var dateBetween = ProposalSchemaV1.PersistentProposal::data.between(myFrom.toInstant(), myTo.toInstant())
-                    val customCriteria = QueryCriteria.VaultCustomQueryCriteria(dateBetween, myStatus)
-                    criteria = criteria.and(customCriteria)
-                }*/
 
                 val results = rpcOps.vaultQueryBy<CouponState>(
                         criteria,
@@ -104,12 +96,10 @@ class CouponApi(private val rpcOps: CordaRPCOps) {
     fun createProposal(req : CouponPojo): Response {
 
         try {
-            val partner : Party = rpcOps.wellKnownPartyFromX500Name(CordaX500Name.parse(req.Partner))!!
             val eni : Party = rpcOps.wellKnownPartyFromX500Name(CordaX500Name.parse("O=Eni,L=Milan,C=IT"))!!
 
             val signedTx = rpcOps.startTrackedFlow(CouponFlow::Creator,
                     eni,
-                    partner,
                     req)
                     .returnValue.getOrThrow()
 
