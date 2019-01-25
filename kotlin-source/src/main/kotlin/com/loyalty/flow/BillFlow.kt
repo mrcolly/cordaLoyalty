@@ -75,7 +75,14 @@ object BillFlow {
                     billPojo.amount,
                     billPojo.emissionDate,
                     billPojo.earnedPoints,
-                    billPojo.couponStateId)
+                    billPojo.couponStateId,
+                    billPojo.type,
+                    billPojo.expirationDate)
+
+            if(couponStateInput != null) {
+                billState.earnedPoints == 0
+                billState.amount -= couponStateInput.state.data.points
+            }
 
             val txCommand = Command(BillContract.Commands.Create(), billState.participants.map { it.owningKey })
             val txBuilder = TransactionBuilder(notary)
@@ -88,12 +95,9 @@ object BillFlow {
                 var userState = updateUser.state.data
                 val oldBalance = userState.loyaltyBalance
 
-                if(couponStateInput == null){
-                    userState.loyaltyBalance = userState.loyaltyBalance + billState.earnedPoints
-                    userState.deltaLoyalty = oldBalance - userState.loyaltyBalance
-                }else{
-                    userState.deltaLoyalty = 0
-                }
+                userState.loyaltyBalance = userState.loyaltyBalance + billState.earnedPoints
+                userState.deltaLoyalty = userState.loyaltyBalance - oldBalance
+
                 userState.lastOperation = billState.linearId.id.toString()
 
                 txBuilder
@@ -102,10 +106,10 @@ object BillFlow {
                         .addCommand(UserContract.Commands.Update(), billState.participants.map { it.owningKey })
             }else{
                 val userState = UserState(Eni,
-                        billState.earnedPoints,
+                        1000 + billState.earnedPoints, //bonus first bill
                         billState.linearId.id.toString(),
                         'B',
-                        if(couponStateInput == null) billState.earnedPoints else 0,
+                        1000 + billState.earnedPoints,
                         UniqueIdentifier(id = UUID.randomUUID(), externalId = billPojo.userId))
 
                 txBuilder

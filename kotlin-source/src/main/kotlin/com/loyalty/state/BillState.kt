@@ -12,10 +12,12 @@ import java.time.Instant
 
 data class BillState(val Eni: Party,
                     val userId: String,
-                    val amount: Double,
+                    var amount: Double,
                     val emissionDate: Instant,
                     val earnedPoints: Int,
                     val couponStateId: String,
+                    val type: Char,
+                    val expirationDate: Instant,
                     override val linearId: UniqueIdentifier = UniqueIdentifier()):
         LinearState, QueryableState {
     /** The public keys of the involved parties. */
@@ -30,6 +32,8 @@ data class BillState(val Eni: Party,
                     this.emissionDate,
                     this.earnedPoints,
                     this.couponStateId,
+                    this.type,
+                    this.expirationDate,
                     this.linearId.id
             )
             else -> throw IllegalArgumentException("Unrecognised schema $schema")

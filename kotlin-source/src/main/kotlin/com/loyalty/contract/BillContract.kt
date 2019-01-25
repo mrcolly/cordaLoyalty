@@ -35,6 +35,8 @@ class BillContract : Contract {
         "emissiondate must be in the past" using (bill.emissionDate < Instant.now())
         "earnedPoints must be greather than 0" using (bill.earnedPoints >= 0)
         "All of the participants must be signers." using (signers.containsAll(bill.participants.map { it.owningKey }))
+        "Bill type must be 'L' or 'G'" using (bill.type == 'L' || bill.type == 'G')
+        "Expiration date must be grather than now" using (bill.expirationDate > Instant.now())
     }
 
 

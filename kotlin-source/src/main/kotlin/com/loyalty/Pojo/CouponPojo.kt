@@ -1,6 +1,7 @@
 package com.loyalty.Pojo
 
 import net.corda.core.serialization.CordaSerializable
+import java.time.Instant
 
 @CordaSerializable
 data class CouponPojo(
@@ -8,5 +9,9 @@ data class CouponPojo(
         val Partner: String = "",
         val points: Int = 0,
         val userId: String = "",
-        val externalId: String = ""
+        val externalId: String = generateId()
 )
+
+fun generateId(): String{
+    return "C"+ System.currentTimeMillis()
+}

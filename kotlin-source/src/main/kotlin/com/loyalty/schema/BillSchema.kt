@@ -37,10 +37,16 @@ object BillSchemaV1 : MappedSchema(
             @Column(name = "couponStateId")
             var couponStateId: String,
 
+            @Column(name = "type")
+            var type: Char,
+
+            @Column(name = "expirationDate")
+            var expirationDate: Instant,
+
             @Column(name = "linear_id")
             var linearId: UUID
     ) : PersistentState() {
         // Default constructor required by hibernate.
-        constructor(): this("", "", 0.0,Instant.now(),0,"", UUID.randomUUID())
+        constructor(): this("", "", 0.0,Instant.now(),0,"", '-', Instant.now(), UUID.randomUUID())
     }
 }
