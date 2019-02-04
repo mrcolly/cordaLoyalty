@@ -5,6 +5,7 @@ import com.loyalty.Pojo.BillPojo
 import com.loyalty.Pojo.PrizePojo
 import com.loyalty.flow.BillFlow
 import com.loyalty.flow.PrizeFlow
+import com.loyalty.schema.PrizeSchemaV1
 import com.loyalty.state.BillState
 import com.loyalty.state.PrizeState
 import com.snam.POJO.ResponsePojo
@@ -38,6 +39,7 @@ class PrizeApi(private val rpcOps: CordaRPCOps) {
     @Produces(MediaType.APPLICATION_JSON)
     fun getAllPrizesByParams(@DefaultValue("1") @QueryParam("page") page: Int,
                                 @DefaultValue("") @QueryParam("id") externalId: String,
+                                @DefaultValue("") @QueryParam("user") userId: String,
                                 @DefaultValue("unconsumed") @QueryParam("status") status: String): Response {
 
         try{
@@ -61,6 +63,12 @@ class PrizeApi(private val rpcOps: CordaRPCOps) {
 
                 if(externalId.length > 0){
                     val customCriteria = QueryCriteria.LinearStateQueryCriteria( externalId = listOf(externalId), status = myStatus)
+                    criteria = criteria.and(customCriteria)
+                }
+
+                if(userId.length > 0){
+                    val idEqual = PrizeSchemaV1.PersistentPrize::userId.equal(userId)
+                    val customCriteria = QueryCriteria.VaultCustomQueryCriteria(idEqual, myStatus)
                     criteria = criteria.and(customCriteria)
                 }
 
