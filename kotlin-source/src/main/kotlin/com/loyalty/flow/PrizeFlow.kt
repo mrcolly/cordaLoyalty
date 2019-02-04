@@ -123,11 +123,17 @@ object PrizeFlow {
 
             val couponStateInput = BillFlow.getCouponState(prizePojo.couponStateId, serviceHub)
 
+
+
             val signTransactionFlow = object : SignTransactionFlow(otherPartyFlow) {
                 override fun checkTransaction(stx: SignedTransaction) = requireThat {
                     "cannot find couponState" + prizePojo.couponStateId using (couponStateInput!= null)
                     "coupon points must be greather than prize cost" using (couponStateInput!!.state.data.points >= prizePojo.costPoints)
                     prizePojo.userId+" cannot spend this coupon" using (prizePojo.userId == couponStateInput!!.state.data.userId)
+
+                    if(couponStateInput!= null){
+                        subFlow(CouponFlow.Consumer(couponStateInput.ref))
+                    }
                 }
             }
 

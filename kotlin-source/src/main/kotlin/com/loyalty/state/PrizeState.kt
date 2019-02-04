@@ -18,13 +18,9 @@ data class PrizeState(val Eni: Party,
                       val costPoints: Int,
                      override val linearId: UniqueIdentifier = UniqueIdentifier(),
                      val couponScheduledTime: Instant = Instant.now()):
-        LinearState, QueryableState, SchedulableState {
+        LinearState, QueryableState {
     /** The public keys of the involved parties. */
     override val participants: List<AbstractParty> get() = listOf(Partner, Eni)
-
-    override fun nextScheduledActivity(thisStateRef: StateRef, flowLogicRefFactory: FlowLogicRefFactory): ScheduledActivity? {
-        return ScheduledActivity(flowLogicRefFactory.create(CouponFlow.Consumer::class.java, thisStateRef), couponScheduledTime)
-    }
 
     override fun generateMappedObject(schema: MappedSchema): PersistentState {
         return when (schema) {

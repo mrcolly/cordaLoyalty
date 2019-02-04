@@ -160,13 +160,11 @@ object CouponFlow {
             // Generate an unsigned transaction.
             if(myLegalIdentity.name.organisation == "Eni"){
 
-                val prizeState = serviceHub.toStateAndRef<PrizeState>(stateRef)
+                val couponStateInput = serviceHub.toStateAndRef<CouponState>(stateRef)
 
-                val couponStateInput = getCouponState(prizeState.state.data.couponStateId, serviceHub)
+                if(couponStateInput == null) throw FlowException("cannot find coupon " + couponStateInput.state.data.linearId.externalId)
 
-                if(couponStateInput == null) throw FlowException("cannot find coupon " + prizeState.state.data.couponStateId)
-
-                val txCommand = Command(CouponContract.Commands.Consume(), prizeState.state.data.Eni.owningKey)
+                val txCommand = Command(CouponContract.Commands.Consume(), couponStateInput.state.data.Eni.owningKey)
                 val txBuilder = TransactionBuilder(notary)
                         .addInputState(couponStateInput)
                         .addCommand(txCommand)
