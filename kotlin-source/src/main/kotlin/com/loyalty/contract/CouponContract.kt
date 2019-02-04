@@ -44,7 +44,6 @@ class CouponContract : Contract {
     }
 
     private fun verifyConsume(tx: LedgerTransaction, signers: Set<PublicKey>) = requireThat {
-
         "create must have one Coupon input" using (!tx.inputsOfType<CouponState>().isEmpty())
         val coupon = tx.inputsOfType<CouponState>().single()
         "All of the participants must be signers." using (signers.containsAll(coupon.participants.map { it.owningKey }))

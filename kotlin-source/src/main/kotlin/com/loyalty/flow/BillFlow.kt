@@ -3,6 +3,7 @@ package com.loyalty.flow
 import co.paralleluniverse.fibers.Suspendable
 import com.loyalty.Pojo.BillPojo
 import com.loyalty.contract.BillContract
+import com.loyalty.contract.CouponContract
 import com.loyalty.contract.UserContract
 import com.loyalty.state.BillState
 import com.loyalty.state.CouponState
@@ -90,12 +91,15 @@ object BillFlow {
                     .addOutputState(billState, BillContract.BILL_CONTRACT_ID)
                     .addCommand(txCommand)
 
-            if(couponStateInput != null) txBuilder.addInputState(couponStateInput)
+            if(couponStateInput != null) {
+                txBuilder.addInputState(couponStateInput)
+                       // .addCommand(CouponContract.Commands.Consume(), couponStateInput.state.data.participants.map { it.owningKey })
+            }
 
             if(updateUser != null){
                 var userState = updateUser.state.data
 
-                if(couponStateInput!!.state.data.userId != userState.linearId.externalId){
+                if(couponStateInput != null && couponStateInput.state.data.userId != userState.linearId.externalId){
                     throw FlowException(userState.linearId.externalId+" cannot spend this coupon")
                 }
 
@@ -103,7 +107,7 @@ object BillFlow {
 
                 userState.loyaltyBalance = userState.loyaltyBalance + billState.earnedPoints
                 userState.deltaLoyalty = userState.loyaltyBalance - oldBalance
-
+                userState.operationType = 'B'
                 userState.lastOperation = billState.linearId.id.toString()
 
                 txBuilder

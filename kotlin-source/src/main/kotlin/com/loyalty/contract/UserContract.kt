@@ -1,5 +1,6 @@
 package com.loyalty.contract
 
+import com.loyalty.state.CouponState
 import com.loyalty.state.UserState
 import net.corda.core.contracts.CommandData
 import net.corda.core.contracts.Contract
@@ -47,7 +48,9 @@ class UserContract : Contract {
         val userIn = tx.inputsOfType<UserState>().single()
         val userOut = tx.outputsOfType<UserState>().single()
         "userIn and userOut must have the same linearId" using (userIn.linearId == userOut.linearId)
-        "loyaltyBalance must change" using (userIn.loyaltyBalance != userOut.loyaltyBalance)
+        if(tx.inputsOfType<CouponState>().isEmpty()){
+            "loyaltyBalance must change" using (userIn.loyaltyBalance != userOut.loyaltyBalance)
+        }
 
         //userIn
         "userId must be non-null" using (!userIn.linearId.externalId.isNullOrEmpty())
