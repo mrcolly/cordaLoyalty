@@ -97,12 +97,12 @@ class BillApi(private val rpcOps: CordaRPCOps) {
         try {
             val eni : Party = rpcOps.wellKnownPartyFromX500Name(CordaX500Name.parse("O=Eni,L=Milan,C=IT"))!!
 
-            val signedTx = rpcOps.startTrackedFlow(BillFlow::Creator,
+            val bill = rpcOps.startTrackedFlow(BillFlow::Creator,
                     eni,
                     req)
                     .returnValue.getOrThrow()
 
-            val resp = ResponsePojo("SUCCESS","transaction "+signedTx.toString()+" committed to ledger.")
+            val resp = ResponsePojo("SUCCESS","transaction committed to ledger.", bill)
             return Response.status(CREATED).entity(resp).build()
 
         } catch (ex: Exception) {

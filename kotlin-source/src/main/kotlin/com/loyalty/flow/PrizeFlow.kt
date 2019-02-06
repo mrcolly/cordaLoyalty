@@ -32,7 +32,7 @@ object PrizeFlow {
     @InitiatingFlow
     @StartableByRPC
     class Creator(val Eni: Party,
-                  val prizePojo: PrizePojo) : FlowLogic<SignedTransaction>() {
+                  val prizePojo: PrizePojo) : FlowLogic<PrizeState>() {
 
         companion object {
             object GENERATING_TRANSACTION : ProgressTracker.Step("Generating transaction based on new IOU.")
@@ -59,7 +59,7 @@ object PrizeFlow {
 
 
         @Suspendable
-        override fun call(): SignedTransaction {
+        override fun call(): PrizeState {
             // Obtain a reference to the notary we want to use.
             val notary = serviceHub.networkMapCache.notaryIdentities[0]
             val myLegalIdentity = serviceHub.myInfo.legalIdentities.first()
@@ -106,7 +106,8 @@ object PrizeFlow {
             // Stage 5.
             progressTracker.currentStep = FINALISING_TRANSACTION
             // Notarise and record the transaction in both parties' vaults.
-            return subFlow(FinalityFlow(fullySignedTx, FINALISING_TRANSACTION.childProgressTracker()))
+            subFlow(FinalityFlow(fullySignedTx, FINALISING_TRANSACTION.childProgressTracker()))
+            return prizeState
         }
     }
 

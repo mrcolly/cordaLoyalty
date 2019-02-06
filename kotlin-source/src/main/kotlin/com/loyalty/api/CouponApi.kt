@@ -98,12 +98,12 @@ class CouponApi(private val rpcOps: CordaRPCOps) {
         try {
             val eni : Party = rpcOps.wellKnownPartyFromX500Name(CordaX500Name.parse("O=Eni,L=Milan,C=IT"))!!
 
-            val signedTx = rpcOps.startTrackedFlow(CouponFlow::Creator,
+            val coupon = rpcOps.startTrackedFlow(CouponFlow::Creator,
                     eni,
                     req)
                     .returnValue.getOrThrow()
 
-            val resp = ResponsePojo("SUCCESS","transaction "+signedTx.toString()+" committed to ledger.")
+            val resp = ResponsePojo("SUCCESS","transaction committed to ledger.", coupon)
             return Response.status(CREATED).entity(resp).build()
 
         } catch (ex: Exception) {

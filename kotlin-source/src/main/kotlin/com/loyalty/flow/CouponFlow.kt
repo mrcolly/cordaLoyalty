@@ -27,7 +27,7 @@ object CouponFlow {
     @InitiatingFlow
     @StartableByRPC
     class Creator(val Eni: Party,
-                  val couponPojo : CouponPojo) : FlowLogic<SignedTransaction>() {
+                  val couponPojo : CouponPojo) : FlowLogic<CouponState>() {
 
         companion object {
             object GENERATING_TRANSACTION : ProgressTracker.Step("Generating transaction based on new IOU.")
@@ -54,7 +54,7 @@ object CouponFlow {
 
 
         @Suspendable
-        override fun call(): SignedTransaction {
+        override fun call(): CouponState {
             // Obtain a reference to the notary we want to use.
             val notary = serviceHub.networkMapCache.notaryIdentities[0]
             val myLegalIdentity = serviceHub.myInfo.legalIdentities.first()
@@ -103,7 +103,8 @@ object CouponFlow {
             // Stage 5.
             progressTracker.currentStep = FINALISING_TRANSACTION
             // Notarise and record the transaction in both parties' vaults.
-            return subFlow(FinalityFlow(signedTx, FINALISING_TRANSACTION.childProgressTracker()))
+            subFlow(FinalityFlow(signedTx, FINALISING_TRANSACTION.childProgressTracker()))
+            return couponState
         }
     }
 
